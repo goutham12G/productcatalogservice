@@ -2,7 +2,7 @@ pipeline {
 
   environment {
     PROJECT = "my-project-600-339318"
-    APP_NAME = "productlogservice"
+    APP_NAME = "product"
     FE_SVC_NAME = "${APP_NAME}-frontend"
     CLUSTER = "iphone"
     CLUSTER_ZONE = "us-central1-c"
@@ -22,7 +22,7 @@ labels:
   component: ci
 spec:
   # Use service account that can deploy to all namespaces
-  #serviceAccountName: cd-jenkins
+  # serviceAccountName: cd-jenkins
   containers:
   - name: golang
     image: golang:1.10
@@ -43,13 +43,11 @@ spec:
 }
   }
   stages {
-    stage('Test') {
+    stage('build') {
       steps {
         container('golang') {
           sh """
-            ln -s `pwd` /go/src/sample-app
-            cd /go/src/sample-app
-            go test
+            ln -s `pwd` 
           """
         }
       }
@@ -61,14 +59,11 @@ spec:
         }
       }
     }
-    
-   
     stage('Deploy Dev') {
-    
-    
       steps {
         container('kubectl') {
-         
+          sh "gcloud container clusters get-credentials iphone --zone us-central1-c --project my-project-600-339318"
+          sh "kubectl --help"
         }
       }
     }
